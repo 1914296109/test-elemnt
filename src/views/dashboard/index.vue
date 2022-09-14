@@ -1,30 +1,56 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+    <el-tree
+      :props="props"
+      :load="loadNode"
+      lazy
+      show-checkbox
+    />
   </div>
 </template>
-
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
-  name: 'Dashboard',
-  computed: {
-    ...mapGetters([
-      'name'
-    ])
+  data() {
+    return {
+      props: {
+        label: 'name',
+        children: 'children',
+        isLeaf: 'leaf'
+      }
+    }
+  },
+  methods: {
+    loadNode(node, resolve) {
+      console.log(node, resolve)
+      if (node.level === 0) {
+        return resolve([{ name: 'region' }])
+      }
+      // if (node.level > 1) return resolve([])
+
+      setTimeout(() => {
+        const data = [{
+          name: 'leaf',
+          leaf: true
+        }, {
+          name: 'zone',
+          leaf: false,
+          children: [
+            {
+              name: 'leaf',
+              leaf: true
+            }, {
+              name: 'zone'
+            }, {
+              name: 'zone'
+            }, {
+              name: 'zone'
+            }
+          ]
+        }]
+
+        resolve(data)
+      }, 500)
+    }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.dashboard {
-  &-container {
-    margin: 30px;
-  }
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
-  }
-}
-</style>
